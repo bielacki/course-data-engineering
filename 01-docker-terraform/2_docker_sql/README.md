@@ -379,4 +379,57 @@ python ingest_data.py \
 
 Now we are ready to dockerize our ingestion script.
 
-We need to make changes to our Dockerfile
+Note: we are also going to replace CSV with parquet file, that we will be downloading from the NYC website. So we change the ingestion script:
+- change `load_csv` to `load_parquet`
+- remove iterator
+
+We need to make changes to our Dockerfile:
+
+In addition to `pandas` we need to install `sqlalchemy`, `psycopg2` (package for accessing Postgres with Python) and `pyarrow` (needed for working with parquet).
+
+```dockerfile
+RUN pip install pandas sqlalchemy psycopg2 pyarrow
+```
+
+We also need to install `wget` so that our container can download csv files.
+
+```dockerfile
+RUN apt-get install wget
+```
+
+and rename script files:
+
+```dockerfile
+COPY ingest_data.py ingest_data.py
+
+ENTRYPOINT [ "python", "ingest_data.py" ]
+```
+
+Then build an image:
+
+```bash
+docker image build --tag ingest_data_dockerized .
+```
+
+After the image is built, we can run a container with all the parameters we specified earlier when running the Python script. We also need to specify the network (`pg-network`), otherwise the container with the database won't be visible for our container with the script.
+
+`--network=pg-network` should be added **before** the name of the image, because it is a docker parameter.
+
+! We need to specify the name of the container with the Postgres database in the host parameter instead of `localhost`, because it is in the `pg-network` now.
+
+```bash
+docker container run -it --network=pg-network ingest_data_dockerized \
+        --user=root \
+        --password=root \
+        --host=postgres-database \
+        --port=5432 \
+        --database=ny_taxi \
+        --table=yellow_taxi_data \
+        --url="https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2021-01.parquet"
+```
+
+Result:
+
+```
+Inserted another chunk, took 67.907 seconds
+```
