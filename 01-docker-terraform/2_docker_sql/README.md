@@ -433,3 +433,41 @@ Result:
 ```
 Inserted another chunk, took 67.907 seconds
 ```
+
+## Docker Compose
+
+We can combine instructions for multiple containers and run them with a single command isung `docker compose`.
+
+In ordrer to do thi, we need to create a `docker-compose.yaml` file.
+
+```yaml
+services:
+  pgdatabase:
+    container_name: pgdatabase
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=ny_taxi
+    volumes:
+      - "./ny_taxi_postgres_data:/var/lib/posgresql/data:rw"
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=root
+    ports:
+      - "8080:80"
+```
+
+Note: we don't need to specify network, because all containers (services) created via sigle docker-compose will have the same network.
+
+After the containers are up, we can navigate to pgAdmin UI and add a new database connection. As a hostname we should specify `pgdatabase`, because this is the name of the service with our PG database.
+
+```bash
+docker compose up -d # Detached mode: Run containers in the background
+docker compose down # Stop and remove containers, networks
+docker compose stop # Stops containers without deleting them
+docker compose start # Start stopped containers again
+```
