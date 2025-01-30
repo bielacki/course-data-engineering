@@ -92,15 +92,17 @@ If there are more than one answers, select only one of them
 
 ### Solution 2:
 
-We should look for a container name and container destination port. Since the `pgadmin` container (container_name: pgadmin) will be connecting to the `postgres` container (container_name: postgres), we should put `postgres` as the `hostname` in the pgAdmin UI.
+We should look for a service name and container destination port. Since the `pgadmin` service will be connecting to the `db` service , we should put `db` as the `hostname` in the pgAdmin UI.
 
-And ports for the `postgres` contanier mapped as '5433:5432', s othe destination port is `5432`.
+And ports for the `db` serveice mapped as '5433:5432', s othe destination port is `5432`.
 
 So, in the `port` field in the pgAdmin UI we should specify `5432`.
 
+! Answer `postgres:5432` is also correct, because container_name is also can be used to specify hostname in pgAdmin.
+
 ### Answer 2:
 
-postgres:5432
+db:5432
 
 ##  Prepare Postgres
 
