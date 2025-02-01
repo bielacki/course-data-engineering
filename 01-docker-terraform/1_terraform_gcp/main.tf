@@ -8,15 +8,14 @@ terraform {
 }
 
 provider "google" {
-  credentials = "secrets/terraform-sa-course-data-engineering-2e97d246cf4a.json"
-  project = "course-data-engineering"
-  region  = "europe-west2"
-  zone    = "europe-west2-a"
+  credentials = var.credentials
+  project     = var.project_id
+  region      = var.project_region
 }
 
 resource "google_storage_bucket" "demo-bucket" {
-  name          = "course-data-engineering-demo-bucket"
-  location      = "EU"
+  name          = var.gcs_bucket_name
+  location      = var.project_location
   force_destroy = true
 
   lifecycle_rule {
@@ -36,4 +35,9 @@ resource "google_storage_bucket" "demo-bucket" {
       type = "AbortIncompleteMultipartUpload"
     }
   }
+}
+
+resource "google_bigquery_dataset" "demo_dataset" {
+  dataset_id = var.bq_dataset_name
+  location   = var.project_region
 }
