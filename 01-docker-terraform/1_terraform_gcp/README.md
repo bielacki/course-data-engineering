@@ -193,3 +193,79 @@ Result:
 # Destroy complete! Resources: 1 destroyed.
 ```
 
+## Terraform variables
+
+Let's create a BigQuery dataset: https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/bigquery_dataset
+
+Paste into main.tf
+
+```terraform
+resource "google_bigquery_dataset" "demo_dataset" {
+  dataset_id = "demo_dataset"
+  location   = "europe-west2"
+}
+```
+
+And run `terraform apply`.
+
+Output:
+
+```bash
+# google_bigquery_dataset.demo_dataset: Creating...
+# google_storage_bucket.demo-bucket: Creating...
+# google_bigquery_dataset.demo_dataset: Creation complete after 2s [id=projects/course-data-engineering/datasets/demo_dataset]
+# google_storage_bucket.demo-bucket: Creation complete after 4s [id=course-data-engineering-demo-bucket]
+
+# Apply complete! Resources: 2 added, 0 changed, 0 destroyed.
+```
+
+Ok, it works, now let's destroy the resources.
+
+```bash
+terraform destroy
+```
+
+Create a file named `variables.tf`.
+
+Here we can define variables like this:
+
+```
+variable "bq_dataset_name" {
+    description = "My BigQuery Dataset Name"
+    default     = "demo_dataset"
+}
+```
+
+We can reference variables in the `.tf` files like this:
+
+```
+name = var.gcs_bucket_name
+```
+
+Change string with variables where needed in `main.tf` and run `terraform apply`.
+
+Output:
+
+```bash
+# google_bigquery_dataset.demo_dataset: Creating...
+# google_storage_bucket.demo-bucket: Creating...
+# google_bigquery_dataset.demo_dataset: Creation complete after 2s [id=projects/course-data-engineering/datasets/demo_dataset]
+# google_storage_bucket.demo-bucket: Creation complete after 5s [id=course-data-engineering-demo-bucket]
+
+# Apply complete! Resources: 2 added, 0 changed, 0 destroyed.
+```
+
+Run `terraform destroy`.
+
+### Credentials in variables
+
+We can specify credentials variable in the variables.tf and paste a path to our .json file.
+
+Terraform has a built-in file() function, which reads the contents of a file at a given path and returns them as a string:
+
+```
+variable "credentials" {
+    description = "My service account key"
+    default = "secrets/terraform-sa-course-data-engineering-2e97d246cf4a.json"
+}
+```
