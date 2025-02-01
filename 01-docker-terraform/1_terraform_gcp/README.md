@@ -270,10 +270,10 @@ variable "credentials" {
 }
 ```
 
-## Setting up the Environment on Google Cloud
+# Setting up the Environment on Google Cloud
 
 First we need to generate SSH keys.\
-Instructions: https://cloud.google.com/compute/docs/connect/create-ssh-keys
+Instruction: https://cloud.google.com/compute/docs/connect/create-ssh-keys
 
 ```bash
 ssh-keygen -t rsa -f ~/.ssh/<KEY_FILENAME> -C <USERNAME>
@@ -281,23 +281,23 @@ ssh-keygen -t rsa -f ~/.ssh/<KEY_FILENAME> -C <USERNAME>
 
 Replace the following:
 
-- **`KEY_FILENAME`**: the name for your SSH key file.
+- `KEY_FILENAME`: the name for your SSH key file.
 
   For example, a filename of `my-ssh-key` generates a private key file named `my-ssh-key` and a public key file named `my-ssh-key.pub`.
   
-- **`USERNAME`**: your username on the VM. For example `cloudysanfrancisco`, or `cloudysanfrancisco_gmail_com`.
+- `USERNAME`: your username on the VM. For example `cloudysanfrancisco`, or `cloudysanfrancisco_gmail_com`.
 
-  For Linux VMs, the **`USERNAME`** can't be `root`, unless you configure your VM to allow root login.
+  For Linux VMs, the `USERNAME` can't be `root`, unless you configure your VM to allow root login.
 
 ```bash
 ssh-keygen -t rsa -f ~/.ssh/de-course -C m
 ```
 
-It generated two keys:
+It generates two keys:
 - `de-course` (private)
 - `de-course` (public)
 
-Now navigate to **Compute Engine** -> **Metadata**.
+Now navigate to **Compute Engine** -> **Metadata** in GCP.
 
 Enable Compute Engine API if asked.
 
@@ -307,7 +307,7 @@ Click **Add SSH Key** and copy output from:
 cat de-course.pub
 ```
 
-All VMs in this project are now have this SSH key.
+All VMs in this project are now have access to this SSH key.
 
 Navigate to **VM instances** -> **Create instance**.
 
@@ -335,7 +335,7 @@ ssh -i <PRIVATE SSH KEY PATH> <USERNAME FROM SSH KEY>@<VM IP ADDRESS>
 ssh -i ~/.ssh/de-course m@35.189.77.12
 ```
 
-We already have gcloud SDK installed on this machine, check it:
+We already have `gcloud` SDK installed on this VM, check it:
 
 ```bash
 gcloud --version
@@ -354,17 +354,17 @@ gcloud --version
 # skaffold 2.13.1
 ```
 
-### Configure VM instance
+## Configure VM instance
 
-Create a file named config in the .ssh folder. We will use it for configuring SSH access to the VM.
+Create a file named `config` in the `.ssh` folder on a local machine. We will use it for configuring SSH access to the VM.
 
 Specify the following parameters:
 
-```
-Host test-de-course-instance # just an alias for simplicity
-  HostName 35.189.77.12 # External IP
-  User m # username from SSH key
-  IdentityFile ~/.ssh/de-course # path to the private key
+```bash
+Host test-de-course-instance  # just an alias
+  HostName 35.189.77.12  # External IP
+  User m  # username from SSH key
+  IdentityFile ~/.ssh/de-course  # path to the private key
 ```
 
 So now we can ssh into our VM using just an alias from config:
@@ -373,14 +373,13 @@ So now we can ssh into our VM using just an alias from config:
 ssh test-de-course-instance
 ```
 
-### Configure VS Code to work with remote VM
+## Configure VS Code to work with remote VM
 
 We can use visual code editor for work on remote VM.
 
-Go to Extensions and find **Remote SSH**.
+Go to Extensions and install **Remote SSH**.
 
-After it's installed in the bottom left corner click the arrows icon ("Open a remote window") and select **Connect to host**.\
-Because we added our VM to the configuration file previously, it will be available in the list.
+After it's installed in the bottom left corner click the arrows icon ("Open a remote window") and select **Connect to host**.\ Because we added our VM to the configuration file previously (`"test-de-course-instance"`), it will be available in the list.
 
 Select it and a new VS Code window will open and connect to our VM via SSH.
 
@@ -390,19 +389,19 @@ Now let's clone the course repo:
 https://github.com/DataTalksClub/data-engineering-zoomcamp.git
 ```
 
-Cool, now we have access to the project VS code. 
+Cool, now we have access to the project's folder in VS code. 
 
-### Configure UV
+## Configure uv
 
-In the video Alexey uses Anaconda for managing Python in the VM, I'll be using UV.
+In the video Alexey uses Anaconda for managing Python in the VM, I'll be using [uv](https://github.com/astral-sh/uv).
 
-Install UV:
+Install uv:
 
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-Then, to add $HOME/.local/bin to your PATH, either restart your shell or run:
+Then, to add `$HOME/.local/bin` to the PATH, either restart shell or run:
 
 ```bash
 source $HOME/.local/bin/env
@@ -415,9 +414,9 @@ echo 'eval "$(uv generate-shell-completion bash)"' >> ~/.bashrc
 echo 'eval "$(uvx --generate-shell-completion bash)"' >> ~/.bashrc
 ```
 
-### Docker installation
+## Docker installation
 
-#### Install Docker Engine
+### Install Docker Engine
 
 Set up Docker's apt repository:
 
@@ -437,12 +436,14 @@ echo \
 sudo apt-get update
 ```
 
+And install Docker Engine:
+
 ```bash
 sudo apt update
 sudo apt install docker.io
 ```
 
-On Ubuntu regular users are not allowed to run docekr commands without root.
+On Ubuntu regular users are not allowed to run docker commands without root.
 
 To fix this, follow the instructions described here: https://docs.docker.com/engine/install/linux-postinstall/.
 
@@ -453,7 +454,7 @@ sudo groupadd docker
 sudo usermod -aG docker $USER
 ```
 
-Logout/login and then try to `docker container run hello-world`.
+Logout + login and then try to `docker container run hello-world`.
 
 ```bash
 # Hello from Docker!
@@ -462,9 +463,9 @@ Logout/login and then try to `docker container run hello-world`.
 
 👍
 
-#### Install Docker Compose
+### Install Docker Compose
 
-It is better to install docekr compose as a plugin, because it uses `docker compose` syntax instead of` docker-compose`: https://docs.docker.com/compose/install/linux/
+It is better to install docker compose as a plugin, because it uses `docker compose` syntax instead of` docker-compose`: https://docs.docker.com/compose/install/linux/.
 
 Make sure that [Docker's apt repository is installed](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository).
 
@@ -476,7 +477,7 @@ sudo apt-get install docker-compose-plugin
 ```
 
 
-### Install pgcli
+## Install pgcli
 
 ```bash
 uv add psycopg-binary
@@ -491,14 +492,14 @@ pgcli -h localhost -p 5432 -u root -d ny_taxi
 
 👍
 
-### Port forwarding
+## Port forwarding
 
-How we can forward ports of Postgres DB running in Docker on the VM to access it from our local machine?
+We can forward ports of Postgres DB running in Docker on the VM to access it from our local machine.
 
 Open Ports tab in VS code (near Terminal) and click Forward a Port.\
 Enter `5432` into a Port field. Forwarded address will be set to `localhost:5432`.
 
-Now we can access Postgres database from our local machine using pgcli:
+Now we can access Postgres database from our local machine using `pgcli`:
 
 ```bash
 pgcli -h localhost -p 5432 -u root -d ny_taxi
@@ -506,30 +507,32 @@ pgcli -h localhost -p 5432 -u root -d ny_taxi
 
 Do the same for port 8080 to get access to the pgAdmin UI.
 
-Go to http://localhost:8080/ - 👍
+Go to http://localhost:8080/
+
+👍
 
 
-### Upload data to the database
+## Upload data to the database
 
-Let's ingest data to the DB using upload_data.ipynb.
+Let's ingest data to the DB using `upload_data.ipynb`.
 
-Add all dependencies with uv:
+Add all dependencies with `uv`:
 
 ```bash
 uv add ipykernel pandas sqlalchemy psycopg2-binary
 ```
 
-Copy csv to the project directory:
+Download csv to the project directory:
 
 ```bash
 wget https://github.com/DataTalksClub/nyc-tlc-data/releases/download/yellow/yellow_tripdata_2021-01.csv.gz
 ```
 
-And run notebook.
+And run `upload_data.ipynb` notebook.
 
 Data will be ingested into the `yellow_taxi_data` table.
 
-### Install Terraform
+## Install Terraform
 
 Install via `apt`:
 
@@ -548,11 +551,11 @@ sudo apt update && sudo apt install terraform
 
 To run terraform commands, we need to copy our service account json to the VM.
 
-We'll use sftp. Connect to our VM:
+We'll use `sftp` for that.
 
-Navigate to the `secrets` folder where our SA json is stored.
+On a local machine, navigate to the `secrets` folder where our service account json is stored.
 
-Connect to our VM via `sftp`.
+Connect to our VM via `sftp`:
 
 ```bash
 sftp test-de-course-instance
@@ -564,7 +567,7 @@ cd secrets
 put terraform-sa-course-data-engineering-2e97d246cf4a.json
 ```
 
-### Google Cloud CLI configuration
+## Authenticate to Google Cloud using gcloud
 
 Set the `GOOGLE_APPLICATION_CREDENTIALS` enviromment variable in the VM:
 
@@ -592,7 +595,7 @@ Output:
 
 👍
 
-### Run Terraform
+## Run Terraform
 
 ```bash
 terraform init
@@ -602,7 +605,7 @@ terraform apply
 terraform destroy
 ```
 
-### Stop VM
+## Stop VM
 
 From CLI:
 
@@ -614,15 +617,15 @@ Or from GCP console.
 
 (stopping a VM will take some time.)
 
-❗️ After stopping and starting a VM again a new external IP may be asssgne to it.
-In this case we need to connect to a new IP, and edit our .ssh/config file.
+❗️ After stopping and starting a VM again, a new external IP may be assigned to it.
+In this case we need to connect to a new IP, and edit our `.ssh/config` file.
 
 If we stop VM, we won't be charged for running instance, but still be charged for storage, because after starting a VM again our filesystem is preserved.
 
 ❗️ After stopping a VM all Docker containers will also be stopped.
 
-After starting a VM containers are still be available, just start them with docker compose:
+After starting a VM containers are still will be available, just start them with docker compose:
 
 ```bash
-docker conpose start
+docker compose start
 ```

@@ -1,6 +1,4 @@
-# Notes
-
-## 1. Docker
+# Docker
 
 ![alt text](./img/1_tjTUpEi8h53-DMkweX2TDQ.png)
 
@@ -171,7 +169,7 @@ Output:
 Job finished succesfully for 2025-01-01
 ```
 
-## 2. Ingesting NY taxi data to Postgres
+# Ingesting NY taxi data to Postgres
 
 
 Now we are going to run a container with a Postgres database image.
@@ -239,11 +237,9 @@ Next let's try to establish a connection to our database using the `pgcli` Pytho
 I'm using [uv](https://github.com/astral-sh/uv) for managing Python environments and packages, so let's install `pgcli` into a virtual environment:
 
 ```bash
-uv tool install pgcli --with psycopg-binary
+uv add psycopg-binary
+uv add pgcli
 ```
-
-Note, that `uv add pgcli` doesn't work, because:
-> _It looks like pgcli depends on (but does not declare) pq being available in some way._ ([source](https://github.com/astral-sh/uv/issues/8175#issuecomment-2416867368))
 
 After install pgcli let's connect to Postgres:
 
@@ -251,10 +247,10 @@ After install pgcli let's connect to Postgres:
 pgcli -h localhost -p 5432 -u root -d ny_taxi
 ```
 
-### Load data into Postgres
+## Load data into Postgres
 
 Download the following files and put them into the `source_data` folder in the project:
-- `yellow_tripdata_2021-01.csv` file from [here](https://www1.nyc.gov/assets/tlc/downloads/pdf/working_parquet_format.pdf) or parquet file from [original source](https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page). Make sure to download **"Yellow Taxi Trip Records"** for January 2021.
+- `yellow_tripdata_2021-01.csv` file from [here](https://github.com/DataTalksClub/nyc-tlc-data/releases/download/yellow/yellow_tripdata_2021-01.csv.gz) or parquet file from [original source](https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page). Make sure to download **"Yellow Taxi Trip Records"** for January 2021.
 
 - [Data Dictionary file](https://www.nyc.gov/assets/tlc/downloads/pdf/data_dictionary_trip_records_yellow.pdf), which describes each column in our source file.
 
@@ -289,7 +285,7 @@ Create `upload_data.ipynb` file in the project directory.
 An alternative way to connect to the Postgres database using `sqlalchemy` is described in the [pg_test_connection.ipynb](pg_test_connection.ipynb) file.
 
 
-### Connecting pgAdmin and Postgres
+## Connecting pgAdmin and Postgres
 
 pgAdmin is GUI tool for PostgreSQL.
 
@@ -360,7 +356,7 @@ Now we can navigate to the [pgAdmin UI](http://localhost:8080/browser/) and add 
 - Password: `root`
 
 
-### Dockerizing the Ingestion Script
+## Dockerizing the Ingestion Script
 
 Export[ upload_data.ipynb ](upload_data.ipynb) as script,
 name the new file ingest_data.py and place it in the same directory.
@@ -434,7 +430,7 @@ Result:
 Inserted another chunk, took 67.907 seconds
 ```
 
-## Docker Compose
+# Docker Compose
 
 We can combine instructions for multiple containers and run them with a single command isung `docker compose`.
 
